@@ -3,21 +3,15 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: 2016-07-27 01:05:23
+-- Generation Time: 2016-07-27 02:15:51
 -- 服务器版本： 5.6.23
 -- PHP Version: 5.6.16
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
 --
--- Database: `uqidi_admin`
+-- Database: `qidiyao_admin`
 --
 
 -- --------------------------------------------------------
@@ -37,14 +31,14 @@ CREATE TABLE IF NOT EXISTS `qd_admin` (
   `num` int(11) unsigned NOT NULL DEFAULT '0',
   `loginip` char(20) NOT NULL DEFAULT '',
   `logintime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00'
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- 转存表中的数据 `qd_admin`
 --
 
 INSERT INTO `qd_admin` (`id`, `username`, `password`, `realname`, `email`, `roleid`, `status`, `num`, `loginip`, `logintime`) VALUES
-(1, 'superman', 'fb9ceebe516b0d6dbf111861aa4aee9bb49d2f', 'superman', 'tao.wang1@youku.com', 1, 1, 49, '127.0.0.1', '2016-07-23 10:51:44');
+(1, 'superman', 'fb9ceebe516b0d6dbf111861aa4aee9bb49d2f', 'superman', 'tao.wang1@youku.com', 1, 1, 52, '127.0.0.1', '2016-07-27 02:07:44');
 
 -- --------------------------------------------------------
 
@@ -84,7 +78,7 @@ CREATE TABLE IF NOT EXISTS `qd_log` (
   `log_info` text,
   `cip` char(15) CHARACTER SET latin1 NOT NULL,
   `create_time` datetime NOT NULL
-) ENGINE=MyISAM AUTO_INCREMENT=118 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -100,7 +94,7 @@ CREATE TABLE IF NOT EXISTS `qd_mailtpl` (
   `subject` varchar(300) NOT NULL DEFAULT '',
   `content` text NOT NULL,
   `utime` int(10) unsigned NOT NULL DEFAULT '0'
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- 转存表中的数据 `qd_mailtpl`
@@ -157,33 +151,9 @@ INSERT INTO `qd_menu` (`id`, `name`, `pid`, `module`, `controller`, `action`, `i
 (40, '后台日志', 1, 'admin', 'Log', 'index', '', '', 3, 1),
 (41, '设置模块', 0, 'admin', 'SetUp', 'init', 'linecons-cog', '', 1, 1),
 (42, '网站设置', 41, 'admin', 'SetUp', 'website', '', '', 0, 1),
-(2, '用户模块', 0, 'user', 'User', 'init', 'fa-user', '', 2, 1),
-(6, '用户管理', 2, 'user', 'User', 'index', '', '', 0, 1),
 (43, '基本设置', 41, 'admin', 'SetUp', 'basic', '', '', 1, 1),
 (69, '邮件模版', 41, 'admin', 'SetUp', 'mailtpl', '', '', 3, 1),
-(44, '邮件设置', 41, 'admin', 'SetUp', 'mail', '', '', 2, 1),
-(50, '用户组管理', 2, 'user', 'Group', 'index', '', '', 1, 1),
-(45, '用户银行', 2, 'user', 'Bank', 'index', '', '', 2, 1),
-(58, '支付管理', 2, 'user', 'Pay', 'index', '', '', 3, 1),
-(52, '显示基本资料', 6, 'user', 'User', 'show', '', '', 0, 1),
-(53, '添加用户', 6, 'user', 'User', 'add', '', '', 1, 1),
-(54, '编辑用户', 6, 'user', 'User', 'edit', '', '', 2, 1),
-(55, '编辑信息', 6, 'user', 'User', 'editInfo', '', '', 3, 1),
-(56, '编辑配置信息', 6, 'user', 'User', 'editConfig', '', '', 4, 1),
-(57, '编辑银行信息', 6, 'user', 'User', 'editBank', '', '', 5, 1),
-(66, '启动用户', 6, 'user', 'User', 'enable', '', '', 6, 1),
-(67, '禁用用户', 6, 'user', 'User', 'disable', '', '', 7, 1),
-(68, '删除用户', 6, 'user', 'User', 'delete', '', '', 8, 1),
-(59, '显示用户组', 50, 'user', 'Group', 'show', '', '', 0, 1),
-(60, '新增用户组', 50, 'user', 'Group', 'add', '', '', 1, 1),
-(61, '编辑会员组', 50, 'user', 'Group', 'edit', '', '', 2, 1),
-(46, '显示用户银行', 45, 'user', 'Bank', 'show', '', '', 0, 1),
-(47, '添加用户银行', 45, 'user', 'Bank', 'add', '', '', 1, 1),
-(48, '编辑用户银行', 45, 'user', 'Bank', 'edit', '', '', 2, 1),
-(49, '删除用户银行', 45, 'user', 'Bank', 'delete', '', '', 3, 1),
-(62, '显示支付信息', 58, 'user', 'Pay', 'show', '', '', 0, 1),
-(63, '新增支付信息', 58, 'user', 'Pay', 'add', '', '', 1, 1),
-(64, '编辑支付信息', 58, 'user', 'Pay', 'edit', '', '', 2, 1),
+(44, '邮件设置', 41, 'admin', 'SetUp', 'mail', '', '', 2, 1);
 
 -- --------------------------------------------------------
 
@@ -214,31 +184,6 @@ INSERT INTO `qd_role` (`id`, `role_name`, `priv`, `status`) VALUES
 --
 
 --
--- Indexes for table `qd_admin`
---
-ALTER TABLE `qd_admin`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `qd_config`
---
-ALTER TABLE `qd_config`
-  ADD PRIMARY KEY (`code`),
-  ADD UNIQUE KEY `code` (`code`);
-
---
--- Indexes for table `qd_log`
---
-ALTER TABLE `qd_log`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `qd_mailtpl`
---
-ALTER TABLE `qd_mailtpl`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `qd_menu`
 --
 ALTER TABLE `qd_menu`
@@ -257,21 +202,6 @@ ALTER TABLE `qd_role`
 --
 
 --
--- AUTO_INCREMENT for table `qd_admin`
---
-ALTER TABLE `qd_admin`
-  MODIFY `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
---
--- AUTO_INCREMENT for table `qd_log`
---
-ALTER TABLE `qd_log`
-  MODIFY `id` int(10) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=118;
---
--- AUTO_INCREMENT for table `qd_mailtpl`
---
-ALTER TABLE `qd_mailtpl`
-  MODIFY `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
---
 -- AUTO_INCREMENT for table `qd_menu`
 --
 ALTER TABLE `qd_menu`
@@ -281,6 +211,3 @@ ALTER TABLE `qd_menu`
 --
 ALTER TABLE `qd_role`
   MODIFY `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=6;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

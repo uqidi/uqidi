@@ -7,16 +7,16 @@ if(RUN_T == RUN_T_ONLINE){
                 'host' => array(
                     0 => '127.0.0.1:3306'
                 ),
-                'user'  => 'root',
-                'pw'    => 'qidiyao',
+                'user'  => 'uqidi',
+                'pw'    => 'uqidi',
                 'name'  => 'qidiyao_admin',
             ),
             'slave' => array(
                 'host' => array(
                     0 => '127.0.0.1:3306'
                 ),
-                'user'  => 'root',
-                'pw'    => 'qidiyao',
+                'user'  => 'uqidi',
+                'pw'    => 'uqidi',
                 'name'  => 'qidiyao_admin',
             )
         ),
@@ -29,16 +29,16 @@ if(RUN_T == RUN_T_ONLINE){
                 'host' => array(
                     0 => '127.0.0.1:3306'
                 ),
-                'user'  => 'root',
-                'pw'    => 'qidiyao',
+                'user'  => 'uqidi',
+                'pw'    => 'uqidi',
                 'name'  => 'qidiyao_admin',
             ),
             'slave' => array(
                 'host' => array(
                     0 => '127.0.0.1:3306'
                 ),
-                'user'  => 'root',
-                'pw'    => 'qidiyao',
+                'user'  => 'uqidi',
+                'pw'    => 'uqidi',
                 'name'  => 'qidiyao_admin',
             )
         ),

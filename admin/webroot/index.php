@@ -6,7 +6,7 @@ define('APP_NAME', 'admin');
 define("APP_PATH", dirname(dirname(__FILE__)).'/');
 
 /* 框架路径 */
-define('UQIDI_PATH', '/opt/org/uqidi/web/branches/Uqidi/v1/');
+define('UQIDI_PATH', dirname(APP_PATH).'/Uqidi/');
 
 /* 网站的域名 */
 define('SITE_HOST', $_SERVER["HTTP_HOST"]);
