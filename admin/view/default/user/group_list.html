@@ -1,0 +1,163 @@
+{%assign var="jses" value=['bootstrap-paginator.min','jquery.query']%}
+{%assign var="modal_body" value='user/group_edit.html'%}
+{%assign var="modals" value=['show','confirm','form']%}
+{%include file="public/header.html"%}
+{%include file="public/left.html"%}
+{%include file="public/page_title.html"%}
+<link rel="stylesheet" href="{%$RIA_URL%}js/datatables/dataTables.bootstrap.css">
+<div class="row">
+    <div class="col-sm-12 panel">
+        <div class="panel-body">
+            <form role="form" method="post" id="list-search" class="form-inline">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="{%$LANG.GROUP_NAME%}" name="search[group_name]">
+                </div>
+                <div class="input-group">
+                    <button type="submit" class="btn btn-purple">{%$LANG.SEARCH%}</button>
+                </div>
+                <div class="input-group" style="float: right;">
+                    <button type="button" class="btn btn-secondary" onclick="showFormModal('{%$LANG.ADD%}', {}, fillAdd)"><i class="fa-plus"></i> {%$LANG.ADD%}</button>
+                    <button type="button" class="btn btn-warning"   onclick="publish()">{%$LANG.PUBLISH%}</button>
+                </div>
+            </form>
+
+        </div>
+        <div class="panel-body dataTables_wrapper">
+            <table class="table table-bordered table-striped dataTable" id="table_list">
+                <thead>
+                <tr>
+                    <th class="sorting sorting_desc" data-field="id" style="width: 40px;">{%$LANG.ID%}</th>
+                    <th>{%$LANG.GROUP_NAME%}</th>
+                    <th>{%$LANG.GROUP_GRADE%}</th>
+                    <th>{%$LANG.FETCH_ACCOUNT%}</th>
+                    <th>{%$LANG.PAY_ACCOUNT%}</th>
+                    <th>{%$LANG.USER_CNT%}</th>
+                    <th>{%$LANG.STATUS%}</th>
+                    <th>{%$LANG.ACTIONS%}</th>
+                </tr>
+                </thead>
+                <tbody class="middle-align" id="table_body">
+
+                </tbody>
+            </table>
+            <div class="row"><div class="col-xs-12"><ul id="pages"></ul></div></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var gparams = {%$params|json_encode%};
+</script>
+<script type="text/javascript">
+    function main_page(newPage, reload){
+        gparams['page']  = newPage;
+        var params = gparams;
+        params['rt']    = 'api';
+        params['do']    = 1;
+
+
+        var url = '{%$__URI__%}'+$.query.sets(params).toString();
+
+        $.ajax({
+            url: url,
+            method: 'GET',
+            dataType: 'json',
+            success: function(resp){
+                if(resp.status.code === $SCOPES.$status.SUCC){
+                    show_list(resp.data.list);
+                    if(reload){
+                        show_page(resp.data.page,resp.data.total_page);
+                    }
+                }
+            }
+        });
+    }
+
+    function show_page(currentPage,totalPages){
+        if(totalPages<=0)
+            totalPages = 1;
+        var options = {
+            bootstrapMajorVersion:3,
+            alignment:'right',
+            currentPage: currentPage,
+            numberOfPages: 5,
+            totalPages:totalPages,
+            onPageChanged: function(event, oldPage, newPage){
+                main_page(newPage);
+            }
+
+        }
+        $('#pages').bootstrapPaginator(options);
+    }
+    function show_list(list){
+        var str = '';
+        var len = list.length;
+        var show_url        = "{%U('show')%}?rt=api&id=";
+        var edit_url        = "{%U('edit')%}?rt=api&id=";
+        if(len>0){
+            for(var i=0; i<len; i++){
+                str += '<tr>'+
+                        '<td>'+list[i]['id']+'</td>'+
+                        '<td><a class="icon-left" href="javascript:void(0);" onclick="showShowModal(\''+show_url+list[i]['id']+'\')">'+list[i]['group_name']+'</a></td>'+
+                        '<td>'+list[i]['group_grade']+'</td>'+
+                        '<td>'+list[i]['fetch_account']+'</td>'+
+                        '<td>'+list[i]['pay_account']+'</td>'+
+                        '<td>'+list[i]['user_cnt']+'</td>'+
+                        '<td>'+list[i]['status']+'</td>'+
+                        '<td>'+
+                            '<a class="icon-left" href="javascript:void(0);" onclick="showFormModal(\'{%$LANG.EDIT%}\', \''+edit_url+list[i]['id']+'\', fillEdit)"><i class="fa-edit"></i></a>'+
+                        '</td>'+
+                        '</tr>';
+            }
+        }
+
+        $('#table_body').html(str);
+    }
+    function publish(code){
+        $.ajax({
+            url: "{%U('publish')%}?rt=api",
+            method: 'GET',
+            dataType: 'json',
+            success: function(resp){
+                alert('{%$LANG.PUBLISH%}'+resp.status.msg);
+            }
+        });
+    }
+    jQuery(document).ready(function($){
+        var $state = $("#table_list thead input[type='checkbox']");
+        $state.on('change', function(ev){
+            var $chcks = $("#table_list tbody input[type='checkbox']");
+            if($state.is(':checked')){
+                $chcks.prop('checked', true).trigger('change');
+            }else{
+                $chcks.prop('checked', false).trigger('change');
+            }
+        });
+
+        main_page(1, true);
+
+        $("form#list-search").validate({
+            submitHandler: function(form){
+                var data = $(form).serializeArray();
+                for(var v in data){
+                    gparams[data[v]['name']] = data[v]['value'];
+
+                }
+                main_page(1,true);
+            }
+        });
+        $('.sorting').click(function(){
+            var sortBy = $(this).attr('data-field');
+            var sort = $(this).attr('class').substring(8);
+            $('.sorting').attr('class', 'sorting');
+            if(sort=='sorting_desc'){
+                gparams['sort']  = sortBy+' asc';
+                $(this).attr('class', 'sorting sorting_asc');
+            }else{
+                gparams['sort']  = sortBy+' desc';
+                $(this).attr('class', 'sorting sorting_desc');
+            }
+            main_page(1,true);
+        });
+    });
+</script>
+{%include file="public/footer.html"%}

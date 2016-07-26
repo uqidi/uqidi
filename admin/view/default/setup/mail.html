@@ -1,0 +1,180 @@
+{%assign var="jses" value=['jquery-validate/jquery.validate.min','toastr/toastr.min'] %}
+{%include file="public/header.html"%}
+    {%include file="public/left.html"%}
+    {%include file="public/page_title.html"%}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <form role="form" class="form-horizontal" method="post" id="form-profile" >
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="field-1">{%$LANG.MAIL_SERVER%}：</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="mail_server" name="data[mail_server]" value="{%$info['mail_server']%}">
+                            </div>
+                        </div>
+                        <div class="form-group-separator"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="field-5">{%$LANG.MAIL_PORT%}：</label>
+                            <div class="col-sm-2">
+                                <input type="text" class="form-control" id="mail_port" name="data[mail_port]" value="{%$info['mail_port']%}">
+                            </div>
+                        </div>
+                        <div class="form-group-separator"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="field-5">{%$LANG.MAIL_USER%}：</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="mail_user" name="data[mail_user]" value="{%$info['mail_user']%}">
+                            </div>
+                        </div>
+                        <div class="form-group-separator"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="field-5">{%$LANG.MAIL_PASSWORD%}：</label>
+                            <div class="col-sm-6">
+                                <input type="password" class="form-control" id="mail_password" name="data[mail_password]" value="{%$info['mail_password']%}">
+                            </div>
+                        </div>
+                        <div class="form-group-separator"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="field-4">{%$LANG.MAIL_FROM%}：</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="mail_from" name="data[mail_from]" value="{%$info['mail_from']%}">
+                            </div>
+                        </div>
+                        <div class="form-group-separator"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="field-4">{%$LANG.MAIL_FROM_NAME%}：</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="mail_from_name" name="data[mail_from_name]" value="{%$info['mail_from_name']%}">
+                            </div>
+                        </div>
+                        <div class="form-group-separator"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="field-4">{%$LANG.MAIL_REPLY%}：</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="mail_reply" name="data[mail_reply]" value="{%$info['mail_reply']%}">
+                            </div>
+                        </div>
+                        <div class="form-group-separator"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="field-4">{%$LANG.MAIL_REPLY_NAME%}：</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="mail_reply_name" name="data[mail_reply_name]" value="{%$info['mail_reply_name']%}">
+                            </div>
+                        </div>
+                        <div class="form-group-separator"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="field-4">{%$LANG.MAIL_TO%}：</label>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" id="mail_to" name="mail_to" value="">
+                            </div>
+                            <button type="button" class="btn btn-info" onclick="test_send()">{%$LANG.MAIL_TEST_SEND%}</button>
+                        </div>
+                        <div class="form-group-separator"></div>
+                        <div class="form-group">
+                            <div class="btn center-block">
+                                <button type="reset" class="btn btn-white">{%$LANG.RESET%}</button>
+                                <button type="submit" class="btn btn-info">{%$LANG.SAVE%}</button>
+                                <button type="button" class="btn btn-warning" onclick="publish()">{%$LANG.PUBLISH%}</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function($){
+            $("form#form-profile").validate({
+                rules: {
+                    mail_server: {
+                        required: true
+                    },
+                    mail_port: {
+                        required: true
+                    },
+                    mail_user: {
+                        required: true
+                    },
+                    mail_password: {
+                        required: true
+                    },
+                    mail_from: {
+                        required: true
+                    },
+                    mail_from_name: {
+                        required: true
+                    },
+                    mail_reply: {
+                        required: true
+                    },
+                    mail_reply_name: {
+                        required: true
+                    }
+                },
+
+                messages: {
+                    mail_server: {
+                        required: '{%$LANG.ENTER_MSG%}{%$LANG.MAIL_SERVER%}'
+                    },
+                    mail_port: {
+                        required: '{%$LANG.ENTER_MSG%}{%$LANG.MAIL_PORT%}'
+                    },
+                    mail_user: {
+                        required: '{%$LANG.ENTER_MSG%}{%$LANG.MAIL_USER%}'
+                    },
+                    mail_password: {
+                        required: '{%$LANG.ENTER_MSG%}{%$LANG.MAIL_PASSWORD%}'
+                    },
+                    mail_from: {
+                        required: '{%$LANG.ENTER_MSG%}{%$LANG.MAIL_FROM%}'
+                    },
+                    mail_from_name: {
+                        required: '{%$LANG.ENTER_MSG%}{%$LANG.MAIL_FROM_NAME%}'
+                    },
+                    mail_reply: {
+                        required: '{%$LANG.ENTER_MSG%}{%$LANG.MAIL_REPLY%}'
+                    },
+                    mail_reply_name: {
+                        required: '{%$LANG.ENTER_MSG%}{%$LANG.MAIL_REPLY_NAME%}'
+                    }
+                },
+                submitHandler: function(form){
+                    var data = $(form).serializeArray();
+                    $.ajax({
+                        url: "{%U($code)%}?rt=api&do=1",
+                        method: 'POST',
+                        dataType: 'json',
+                        data: data,
+                        success: function(resp){
+                            alert('{%$LANG.SAVE%}'+resp.status.msg);
+                        }
+                    });
+                }
+            });
+
+        });
+        function publish(){
+            $.ajax({
+                url: "{%U('mail_publish')%}?rt=api",
+                method: 'GET',
+                dataType: 'json',
+                success: function(resp){
+                    alert('{%$LANG.PUBLISH%}'+resp.status.msg);
+                }
+            });
+        }
+        function test_send(){
+            var data = $("form#form-profile").serializeArray();
+            $.ajax({
+                url: "{%U('mail_test_send')%}?rt=api",
+                method: 'POST',
+                dataType: 'json',
+                data: data,
+                success: function(resp){
+                    alert('{%$LANG.MAIL_TEST_SEND%}'+resp.status.msg);
+                }
+            });
+        }
+    </script>
+{%include file="public/footer.html"%}

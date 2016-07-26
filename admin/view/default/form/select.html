@@ -1,0 +1,9 @@
+<select class="form-control" id="form_{%$form_select['id']%}" name="{%$form_select['name']%}">
+    {%foreach from=$form_select.options item=option key=option_key%}
+        {%if isset($form_select['selected']) && $option_key == $form_select['selected']%}
+            <option value="{%$option_key%}" selected>{%$option%}</option>
+        {%else%}
+            <option value="{%$option_key%}">{%$option%}</option>
+        {%/if%}
+    {%/foreach%}
+</select>

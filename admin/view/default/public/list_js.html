@@ -1,0 +1,85 @@
+<script type="text/javascript">
+    var gparams = {%$params|json_encode%};
+</script>
+<script type="text/javascript">
+    function main_page(newPage, reload){
+        gparams['page']  = newPage;
+        var params = gparams;
+        params['rt']    = 'api';
+        params['do']    = 1;
+
+
+        var url = '{%$__URI__%}'+$.query.sets(params).toString();
+
+        $.ajax({
+            url: url,
+            method: 'GET',
+            dataType: 'json',
+            success: function(resp){
+                if(resp.status.code === $SCOPES.$status.SUCC){
+                    show_list(resp.data.list);
+                    if(reload){
+                        show_page(resp.data.page,resp.data.total_page);
+                    }
+                }
+            }
+        });
+    }
+
+    function show_page(currentPage,totalPages){
+        if(totalPages<=0)
+            totalPages = 1;
+        var options = {
+            bootstrapMajorVersion:3,
+            alignment:'right',
+            currentPage: currentPage,
+            numberOfPages: 5,
+            totalPages:totalPages,
+            onPageChanged: function(event, oldPage, newPage){
+                main_page(newPage);
+            }
+
+        }
+        $('#pages').bootstrapPaginator(options);
+    }
+
+
+
+    jQuery(document).ready(function($){
+        var $state = $("#table_list thead input[type='checkbox']");
+        $state.on('change', function(ev){
+            var $chcks = $("#table_list tbody input[type='checkbox']");
+            if($state.is(':checked')){
+                $chcks.prop('checked', true).trigger('change');
+            }else{
+                $chcks.prop('checked', false).trigger('change');
+            }
+        });
+
+        main_page(1, true);
+
+        $("form#list-search").validate({
+            submitHandler: function(form){
+                var data = $(form).serializeArray();
+                for(var v in data){
+                    gparams[data[v]['name']] = data[v]['value'];
+
+                }
+                main_page(1,true);
+            }
+        });
+        $('.sorting').click(function(){
+            var sortBy = $(this).attr('data-field');
+            var sort = $(this).attr('class').substring(8);
+            $('.sorting').attr('class', 'sorting');
+            if(sort=='sorting_desc'){
+                gparams['sort']  = sortBy+' asc';
+                $(this).attr('class', 'sorting sorting_asc');
+            }else{
+                gparams['sort']  = sortBy+' desc';
+                $(this).attr('class', 'sorting sorting_desc');
+            }
+            main_page(1,true);
+        });
+    });
+</script>

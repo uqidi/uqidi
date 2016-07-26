@@ -1,0 +1,151 @@
+{%assign var="jses" value=['bootstrap-paginator.min','jquery.query','jquery-validate/jquery.validate.min']%}
+{%assign var="modals" value=['show','confirm']%}
+{%include file="public/header.html"%}
+{%include file="public/left.html"%}
+{%include file="public/page_title.html"%}
+<link rel="stylesheet" href="{%$RIA_URL%}js/datatables/dataTables.bootstrap.css">
+<div class="row">
+    <div class="col-sm-12 panel">
+        <div class="panel-body">
+            <form role="form" method="post" id="list-search" class="form-inline">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="{%$LANG.BANK_USER%}" name="search[bank_user]">
+                </div>
+                <div class="input-group">
+                    {%$banks_select%}
+                </div>
+                <div class="input-group">
+                    <button type="submit" class="btn btn-purple">{%$LANG.SEARCH%}</button>
+                </div>
+            </form>
+
+        </div>
+        <div class="panel-body dataTables_wrapper">
+            <table class="table table-bordered table-striped dataTable" id="table_list">
+                <thead>
+                <tr>
+                    <th class="sorting sorting_desc" data-field="id" style="width: 40px;">{%$LANG.ID%}</th>
+                    <th>{%$LANG.USERNAME%}</th>
+                    <th>{%$LANG.BANK_TYPE%}</th>
+                    <th>{%$LANG.BANK_USER%}</th>
+                    <th>{%$LANG.BANK_CODE%}</th>
+                    <th>{%$LANG.UTIME%}</th>
+                    <th>{%$LANG.STATUS%}</th>
+                    <th>{%$LANG.ACTIONS%}</th>
+                </tr>
+                </thead>
+                <tbody class="middle-align" id="table_body">
+
+                </tbody>
+            </table>
+            <div class="row"><div class="col-xs-12"><ul id="pages"></ul></div></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var gparams = {%$params|json_encode%};
+</script>
+<script type="text/javascript">
+    function main_page(newPage, reload){
+        gparams['page']  = newPage;
+        var params = gparams;
+        params['rt']    = 'api';
+        params['do']    = 1;
+
+
+        var url = '{%$__URI__%}'+$.query.sets(params).toString();
+
+        $.ajax({
+            url: url,
+            method: 'GET',
+            dataType: 'json',
+            success: function(resp){
+                if(resp.status.code === $SCOPES.$status.SUCC){
+                    show_list(resp.data.list);
+                    if(reload){
+                        show_page(resp.data.page,resp.data.total_page);
+                    }
+                }
+            }
+        });
+    }
+
+    function show_page(currentPage,totalPages){
+        if(totalPages<=0)
+            totalPages = 1;
+        var options = {
+            bootstrapMajorVersion:3,
+            alignment:'right',
+            currentPage: currentPage,
+            numberOfPages: 5,
+            totalPages:totalPages,
+            onPageChanged: function(event, oldPage, newPage){
+                main_page(newPage);
+            }
+
+        }
+        $('#pages').bootstrapPaginator(options);
+    }
+    function show_list(list){
+        var str = '';
+        var len = list.length;
+        var show_url    = "{%U('show', 'Bank','user')%}?rt=api&id=";
+        if(len>0){
+            for(var i=0; i<len; i++){
+                str += '<tr>'+
+                        '<td>'+list[i]['id']+'</td>'+
+                        '<td>'+list[i]['username']+'</td>'+
+                        '<td>'+list[i]['bank_type']+'</td>'+
+                        '<td>'+list[i]['bank_user']+'</td>'+
+                        '<td>'+list[i]['bank_code']+'</td>'+
+                        '<td>'+list[i]['utime']+'</td>'+
+                        '<td>'+list[i]['status']+'</td>'+
+                        '<td>'+
+                            '<a class="icon-left" href="javascript:void(0);" onclick="showShowModal(\''+show_url+list[i]['id']+'\')"><i class="fa-eye"></i></a>'+
+                        '</td>'+
+                        '</tr>';
+            }
+        }
+
+        $('#table_body').html(str);
+    }
+
+    jQuery(document).ready(function($){
+        var $state = $("#table_list thead input[type='checkbox']");
+        $state.on('change', function(ev){
+            var $chcks = $("#table_list tbody input[type='checkbox']");
+            if($state.is(':checked')){
+                $chcks.prop('checked', true).trigger('change');
+            }else{
+                $chcks.prop('checked', false).trigger('change');
+            }
+        });
+
+        main_page(1, true);
+
+        $("form#list-search").validate({
+            submitHandler: function(form){
+                var data = $(form).serializeArray();
+                for(var v in data){
+                    gparams[data[v]['name']] = data[v]['value'];
+
+                }
+                main_page(1,true);
+            }
+        });
+        $('.sorting').click(function(){
+            var sortBy = $(this).attr('data-field');
+            var sort = $(this).attr('class').substring(8);
+            $('.sorting').attr('class', 'sorting');
+            if(sort=='sorting_desc'){
+                gparams['sort']  = sortBy+' asc';
+                $(this).attr('class', 'sorting sorting_asc');
+            }else{
+                gparams['sort']  = sortBy+' desc';
+                $(this).attr('class', 'sorting sorting_desc');
+            }
+            main_page(1,true);
+        });
+    });
+</script>
+{%include file="public/footer.html"%}

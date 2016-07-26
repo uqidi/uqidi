@@ -1,0 +1,146 @@
+{%assign var="jses" value=['jquery-validate/jquery.validate.min','toastr/toastr.min'] %}
+{%include file="public/header.html"%}
+    {%include file="public/left.html"%}
+    {%include file="public/page_title.html"%}
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{%$LANG.PROFILE%}</h3>
+                </div>
+                <div class="errors-container"></div>
+                <div class="panel-body">
+                    <form role="form" class="form-horizontal" method="post" id="form-profile" >
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="field-1">{%$LANG.USERNAME%}：</label>
+                            <div class="col-sm-10">
+                                {%$admin['username']%}
+                            </div>
+                        </div>
+                        <div class="form-group-separator"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="field-5">{%$LANG.ROLE_NAME%}：</label>
+                            <div class="col-sm-10">
+                                {%$admin['role_name']%}
+                            </div>
+                        </div>
+                        <div class="form-group-separator"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="field-2">{%$LANG.PASSWORD%}：</label>
+                            <div class="col-sm-10">
+                                <input type="password" class="form-control" id="password" name="password" value="">
+                            </div>
+                        </div>
+                        <div class="form-group-separator"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="field-3">{%$LANG.REALNAME%}：</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="realname" name="realname" value="{%$admin['realname']%}">
+                            </div>
+                        </div>
+                        <div class="form-group-separator"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="field-4">{%$LANG.EMAIL%}：</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="email" name="email" value="{%$admin['email']%}">
+                            </div>
+                        </div>
+                        <div class="form-group-separator"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="field-6">{%$LANG.LOGINIP%}：</label>
+                            <div class="col-sm-10">
+                                {%$admin['loginip']%}
+                            </div>
+                        </div>
+                        <div class="form-group-separator"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="field-7">{%$LANG.LOGINTIME%}：</label>
+                            <div class="col-sm-10">
+                                {%$admin['logintime']%}
+                            </div>
+                        </div>
+                        <div class="form-group-separator"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="field-7">{%$LANG.NUM%}：</label>
+                            <div class="col-sm-10">
+                                {%$admin['num']%}
+                            </div>
+                        </div>
+                        <div class="form-group-separator"></div>
+                        <div class="form-group">
+                            <div class="btn center-block">
+                                <button type="reset" class="btn btn-white">{%$LANG.RESET%}</button>
+                                <button type="submit" class="btn btn-info">{%$LANG.SAVE%}</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function($){
+            $("form#form-profile").validate({
+                rules: {
+                    password: {
+                        required: false,
+                        rangelength: [6,20]
+                    },
+                    realname: {
+                        required: true
+                    },
+                    email: {
+                        required: true,
+                        email:true
+                    }
+                },
+
+                messages: {
+                    password: {
+                        rangelength: '{%$LANG.RANGELENGTH|sprintf:6:20%}'
+                    },
+                    realname: {
+                        required: '{%$LANG.ENTER_MSG%}{%$LANG.REALNAME%}'
+                    },
+                    email: {
+                        required: '{%$LANG.ENTER_MSG%}{%$LANG.EMAIL%}'
+                    }
+                },
+                submitHandler: function(form){
+                    var data = $(form).serializeArray();
+                    $.ajax({
+                        url: "{%U('profile', 'Main', 'admin')%}?rt=api&do=1",
+                        method: 'POST',
+                        dataType: 'json',
+                        data: data,
+                        success: function(resp){
+                            $(".errors-container .alert").slideUp('fast');
+                            if(resp.status.code === $SCOPES.$status.SUCC){
+                                $(".errors-container").html('<div class="alert alert-success">\
+                                                    <button type="button" class="close" data-dismiss="alert">\
+                                                        <span aria-hidden="true">&times;</span>\
+                                                        <span class="sr-only">Close</span>\
+                                                    </button>\
+                                                    ' + resp.status.msg + '\
+                                                </div>');
+                                if(resp.data.is_logout == 1)
+                                    window.location.href = "{%U('logout', 'Login', 'admin')%}";
+                            }else{
+                                $(".errors-container").html('<div class="alert alert-danger">\
+                                                    <button type="button" class="close" data-dismiss="alert">\
+                                                        <span aria-hidden="true">&times;</span>\
+                                                        <span class="sr-only">Close</span>\
+                                                    </button>\
+                                                    ' + resp.status.msg + '\
+                                                </div>');
+                            }
+
+                            $(".errors-container .alert").hide().slideDown();
+                        }
+                    });
+                }
+            });
+
+        });
+    </script>
+{%include file="public/footer.html"%}

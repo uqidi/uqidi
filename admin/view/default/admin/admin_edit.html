@@ -1,0 +1,119 @@
+<div class="row">
+    <div class="col-md-12">
+        <input type="hidden" id="form_id" name="id">
+        <table class="table table-bordered table-striped">
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <td><label for="field-2" class="control-label">{%$LANG.USERNAME%}</label></td>
+                    <td>
+                        <input type="text" class="form-control" id="form_username" name="username" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="field-2" class="control-label">{%$LANG.PASSWORD%}</label></td>
+                    <td>
+                        <input type="text" class="form-control" id="form_password" name="password">
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="field-2" class="control-label">{%$LANG.REALNAME%}</label></td>
+                    <td>
+                        <input type="text" class="form-control" id="form_realname" name="realname">
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="field-2" class="control-label">{%$LANG.ROLE%}</label></td>
+                    <td>
+                        {%$role_select%}
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="field-2" class="control-label">{%$LANG.EMAIL%}</label></td>
+                    <td>
+                        <input type="text" class="form-control" id="form_email" name="email">
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="field-2" class="control-label">{%$LANG.STATUS%}</label></td>
+                    <td>
+                        {%$status_select%}
+                    </td>
+                </tr>
+            </table>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    function fillEdit(show_url){
+        $('#form_username').attr('readonly', true);
+        $.ajax({
+            dataType: "json",
+            url: show_url,
+            success: function(json){
+                if(json.status.code === $SCOPES.$status.SUCC){
+                    for(var v in json.data){
+                        if(v=='status' || v=='roleid' ){
+                            $('#form_'+v).find('option[value="'+json.data[v]+'"]').prop("selected",true);
+                        }else{
+                            $('#form_'+v).val(json.data[v]);
+                        }
+                    }
+                }else{
+                    alert(json.status.msg);
+                }
+
+            }
+        });
+        $("form#form_modal").attr('action', '{%U('edit', 'Admin', 'admin')%}?rt=api&do=1');
+    }
+    function fillAdd(data){
+        $("form#form_modal").each(function(i,option){
+            option.reset();
+        });
+        $('#form_id').val('');
+        $('#form_username').attr('readonly', false);
+        $("form#form_modal").attr('action', '{%U('add', 'Admin', 'admin')%}?rt=api&do=1');
+    }
+
+    $(document).ready(function($){
+        $("form#form_modal").validate({
+            rules: {
+                realname: {
+                    required: true
+                },
+                email: {
+                    required: true
+                }
+            },
+
+            messages: {
+                realname: {
+                    required: '{%$LANG.ENTER_MSG%}{%$LANG.REALNAME%}.'
+                },
+                email: {
+                    required: '{%$LANG.ENTER_MSG%}{%$LANG.EMAIL%}.'
+                }
+            },
+            submitHandler: function(form){
+                var data = $(form).serializeArray();
+                var form_action = $(form).attr('action');
+                $.ajax({
+                    url: form_action,
+                    method: 'POST',
+                    dataType: 'json',
+                    data: data,
+                    success: function(resp){
+                        if(resp.status.code === $SCOPES.$status.SUCC){
+                            closeFormModal();
+                            main_page(gparams['page'],true);
+                        }else{
+                            alert(resp.status.msg);
+                        }
+                    }
+                });
+            }
+        });
+
+    });
+
+</script>

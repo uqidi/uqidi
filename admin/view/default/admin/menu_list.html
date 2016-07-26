@@ -1,0 +1,136 @@
+{%assign var="jses" value=['jquery.nestable','toastr/toastr.min']%}
+{%assign var="csses" value=['nestable']%}
+{%assign var="modal_body" value='admin/menu_edit.html'%}
+{%assign var="modals" value=['show','confirm','form']%}
+{%include file="public/header.html"%}
+{%include file="public/left.html"%}
+{%include file="public/page_title.html"%}
+<div class="row">
+    <div class="col-sm-12 panel">
+        <div class="dd" id="nestable">
+            <ol class="dd-list">
+                {%foreach from=$list item=module%}
+                    <li class="dd-item" data-id="{%$module['id']%}">
+                        <div class="dd-handle">
+                            {%if !empty($module['icon'])%}
+                                <i class="{%$module['icon']%}"></i>
+                            {%/if%}
+                            <span class="orange">{%$module['name']%}</span>
+                            <span class="lighter grey">
+                                {%$module['description']%}
+                            </span>
+                            <div class="pull-right">
+                                <a class="btn btn-info btn-sm btn-icon icon-left" style="margin-top: -7px;" href="javascript:void(0);" onclick="showShowModal('{%U('show','Menu','admin')%}?rt=api&id={%$module.id%}')">
+                                    <i class="fa-eye"></i>
+                                </a>
+                                <a class="btn btn-secondary btn-sm btn-icon icon-left" style="margin-top: -7px;" href="javascript:void(0);" onclick="showFormModal('{%$LANG.EDIT%}', '{%U('edit','Menu','admin')%}?rt=api&id={%$module.id%}', fillEdit)">
+                                    <i class="fa-edit"></i>
+                                </a>
+                                <a class="btn btn-secondary btn-sm btn-icon icon-left" style="margin-top: -7px;" href="javascript:void(0);" onclick="showFormModal('{%$LANG.ADD%}', '{%$module.id%}', fillAdd)">
+                                    <i class="fa-plus"></i>
+                                </a>
+                                <a class="btn btn-danger btn-sm btn-icon icon-left" style="margin-top: -7px;" href="javascript:void(0);" onclick="showConfirmModal('{%$LANG.DELETE%}','{%U('delete','Menu','admin')%}?rt=api&id={%$module.id%}',del_menu)">
+                                    <i class="fa-remove"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {%if isset($module['sub'])%}
+                        <ol class="dd-list">
+                            {%foreach from=$module['sub'] item=controller%}
+                            <li class="dd-item" data-id="{%$controller['id']%}">
+                                <div class="dd-handle">
+                                    {%if !empty($controller['icon'])%}
+                                        <i class="{%$controller['icon']%}"></i>
+                                    {%/if%}
+                                    <span class="orange">{%$controller['name']%}</span>
+                                    <span class="lighter grey">
+                                        {%$controller['description']%}
+                                    </span>
+                                    <div class="pull-right">
+                                        <a class="btn btn-info btn-sm btn-icon icon-left" style="margin-top: -7px;" href="javascript:void(0);" onclick="showShowModal('{%U('show','Menu','admin')%}?rt=api&id={%$controller.id%}')">
+                                            <i class="fa-eye"></i>
+                                        </a>
+                                        <a class="btn btn-secondary btn-sm btn-icon icon-left" style="margin-top: -7px;" href="javascript:void(0);" onclick="showFormModal('{%$LANG.EDIT%}', '{%U('edit','Menu','admin')%}?rt=api&id={%$controller.id%}', fillEdit)">
+                                            <i class="fa-edit"></i>
+                                        </a>
+                                        <a class="btn btn-secondary btn-sm btn-icon icon-left" style="margin-top: -7px;" href="javascript:void(0);" onclick="showFormModal('{%$LANG.ADD%}', '{%$controller.id%}', fillAdd)">
+                                            <i class="fa-plus"></i>
+                                        </a>
+                                        <a class="btn btn-danger btn-sm btn-icon icon-left" style="margin-top: -7px;" href="javascript:void(0);" onclick="showConfirmModal('{%$LANG.DELETE%}','{%U('delete','Menu','admin')%}?rt=api&id={%$controller.id%}',del_menu)">
+                                            <i class="fa-remove"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                {%if isset($controller['sub'])%}
+                                <ol class="dd-list">
+                                {%foreach from=$controller['sub'] item=action%}
+                                    <li class="dd-item" data-id="{%$action['id']%}">
+                                        <div class="dd-handle">
+                                            {%if !empty($controller['icon'])%}
+                                                <i class="{%$controller['icon']%}"></i>
+                                            {%/if%}
+                                            <span class="orange">{%$action['name']%}</span>
+                                            <span class="lighter grey">
+                                            {%$action['description']%}
+                                            </span>
+                                            <div class="pull-right">
+                                                <a class="btn btn-info btn-sm btn-icon icon-left" style="margin-top: -7px;" href="javascript:void(0);" onclick="showShowModal('{%U('show','Menu','admin')%}?rt=api&id={%$action.id%}')">
+                                                    <i class="fa-eye"></i>
+                                                </a>
+                                                <a class="btn btn-secondary btn-sm btn-icon icon-left" style="margin-top: -7px;" href="javascript:void(0);" onclick="showFormModal('{%$LANG.EDIT%}', '{%U('edit','Menu','admin')%}?rt=api&id={%$action.id%}', fillEdit)">
+                                                    <i class="fa-edit"></i>
+                                                </a>
+                                                <a class="btn btn-secondary btn-sm btn-icon icon-left" style="margin-top: -7px;" href="javascript:void(0);" onclick="showFormModal('{%$LANG.ADD%}', '{%$action.id%}', fillAdd)">
+                                                    <i class="fa-plus"></i>
+                                                </a>
+                                                <a class="btn btn-danger btn-sm btn-icon icon-left" style="margin-top: -7px;" href="javascript:void(0);" onclick="showConfirmModal('{%$LANG.DELETE%}','{%U('delete','Menu','admin')%}?rt=api&id={%$action.id%}',del_menu)">
+                                                    <i class="fa-remove"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </li>
+                                {%/foreach%}
+                                </ol>
+                                {%/if%}
+                            </li>
+                            {%/foreach%}
+                        </ol>
+                        {%/if%}
+                    </li>
+                {%/foreach%}
+            </ol>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    jQuery(function($){
+        $('.dd').nestable({maxDepth:3}).on('change', function(){
+            var data = $('.dd').nestable('serialize');
+            $.ajax({
+                url: "{%U('sort', 'Menu', 'admin')%}?rt=api",
+                method: 'POST',
+                dataType: 'json',
+                data: {list:data},
+                success: function(resp){
+                    if(resp.status.code !== $SCOPES.$status.SUCC){
+                        return false;
+                    }
+                    return false;
+                }
+            });
+            return true;
+        });
+
+        $('.dd-handle a').on('mousedown', function(e){
+            e.stopPropagation();
+        });
+        $('[data-rel="tooltip"]').tooltip();
+
+
+    });
+    function del_menu(data){
+        window.location.reload();
+    }
+</script>
+{%include file="public/footer.html"%}

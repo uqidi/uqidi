@@ -1,0 +1,136 @@
+<div class="row">
+    <div class="col-md-12">
+        <input type="hidden" id="form_id" name="id">
+        <table class="table table-bordered table-striped">
+
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    function fillEdit(show_url){
+        $("form#form_modal table").html('');
+        $.ajax({
+            dataType: "json",
+            url: show_url,
+            success: function(json){
+                if(json.status.code === $SCOPES.$status.SUCC){
+                    var action_name = 'init_'+json.data.action;
+                    window[action_name](json.data.info);
+                }else{
+                    alert(json.status.msg);
+                }
+
+            }
+        });
+    }
+
+
+    function init_edit(data){
+
+        var str='<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.GROUP_NAME%}</label></td>' +
+                    '<td><input type="text" class="form-control" id="form_group_name" name="group_name"></td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.GROUP_GRADE%}</label></td>' +
+                    '<td>{%$group_grade_select%}</td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.FETCH_ACCOUNT%}</label></td>' +
+                    '<td>{%$fetch_account_select%}</td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.PAY_ACCOUNT%}</label></td>' +
+                    '<td>{%$pay_account_select%}</td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.FETCH_TIMES_DAY%}</label></td>' +
+                    '<td><input type="text" class="form-control" id="form_fetch_times_day" name="fetch_times_day"></td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.FETCH_QUOTA_ONCE%}</label></td>' +
+                    '<td><input type="text" class="form-control" id="form_fetch_quota_once" name="fetch_quota_once"></td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.FETCH_QUOTA_DAY%}</label></td>' +
+                    '<td><input type="text" class="form-control" id="form_fetch_quota_day" name="fetch_quota_day"></td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.STATUS%}</label></td>' +
+                    '<td>{%$status_select%}</td>' +
+                '</tr>';
+        $("form#form_modal table").html(str);
+        for(var v in data){
+            if(v=='status' || v=='fetch_account' || v=='pay_account'){
+                $('#form_'+v).find('option[value="'+data[v]+'"]').prop("selected",true);
+            }else{
+                $('#form_'+v).val(data[v]);
+            }
+        }
+        $("form#form_modal").attr('action', '{%U('edit')%}?rt=api&do=1');
+    }
+
+    function fillAdd(){
+        $('#form_id').val('');
+        var str='<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.GROUP_NAME%}</label></td>' +
+                    '<td><input type="text" class="form-control" id="form_group_name" name="group_name"></td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.GROUP_GRADE%}</label></td>' +
+                    '<td>{%$group_grade_select%}</td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.FETCH_ACCOUNT%}</label></td>' +
+                    '<td>{%$fetch_account_select%}</td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.PAY_ACCOUNT%}</label></td>' +
+                    '<td>{%$pay_account_select%}</td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.FETCH_TIMES_DAY%}</label></td>' +
+                    '<td><input type="text" class="form-control" id="form_fetch_times_day" name="fetch_times_day"></td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.FETCH_QUOTA_ONCE%}</label></td>' +
+                    '<td><input type="text" class="form-control" id="form_fetch_quota_once" name="fetch_quota_once"></td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.FETCH_QUOTA_DAY%}</label></td>' +
+                    '<td><input type="text" class="form-control" id="form_fetch_quota_day" name="fetch_quota_day"></td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.STATUS%}</label></td>' +
+                    '<td>{%$status_select%}</td>' +
+                '</tr>';
+        $("form#form_modal table").html(str);
+        $("form#form_modal").attr('action', '{%U('add')%}?rt=api&do=1');
+    }
+
+    $(document).ready(function($){
+        $("form#form_modal").validate({
+            submitHandler: function(form){
+                var data = $(form).serializeArray();
+                var form_action = $(form).attr('action');
+                $.ajax({
+                    url: form_action,
+                    method: 'POST',
+                    dataType: 'json',
+                    data: data,
+                    success: function(resp){
+                        if(resp.status.code === $SCOPES.$status.SUCC){
+                            closeFormModal();
+                            if(resp.data.is_reload)
+                                main_page(gparams['page'],true);
+                        }else{
+                            alert(resp.status.msg);
+                        }
+                    }
+                });
+            }
+        });
+
+    });
+
+</script>

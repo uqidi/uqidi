@@ -1,0 +1,143 @@
+{%assign var="jses" value=['bootstrap-paginator.min','jquery.query','jquery-validate/jquery.validate.min']%}
+{%include file="public/header.html"%}
+{%include file="public/left.html"%}
+{%include file="public/page_title.html"%}
+<link rel="stylesheet" href="{%$RIA_URL%}js/datatables/dataTables.bootstrap.css">
+<div class="row">
+    <div class="col-sm-12 panel">
+        <div class="panel-body">
+            <form role="form" method="post" id="list-search" class="form-inline">
+                <div class="input-group col-xs-2">
+                    <input type="text" class="form-control" placeholder="{%$LANG.USERNAME%}" name="search[username]">
+                </div>
+                <div class="input-group col-xs-2">
+                    <input type="text" class="form-control" placeholder="{%$LANG.LOG_INFO%}" name="search[log_info]">
+                </div>
+                <div class="input-group col-xs-2">
+                    <input type="text" class="form-control" placeholder="{%$LANG.MODULE%}" name="search[module]">
+                </div>
+                <div class="input-group col-xs-2">
+                    <input type="text" class="form-control" placeholder="{%$LANG.CONTROLLER%}" name="search[controller]">
+                </div>
+                <div class="input-group col-xs-2">
+                    <input type="text" class="form-control" placeholder="{%$LANG.ACTION%}" name="search[action]">
+                </div>
+                <div class="input-group">
+                    <button type="submit" class="btn btn-purple">{%$LANG.SEARCH%}</button>
+                </div>
+            </form>
+
+        </div>
+        <div class="panel-body dataTables_wrapper">
+            <table class="table table-bordered table-striped dataTable" id="table_list">
+                <thead>
+                    <tr>
+                        <th>{%$LANG.USERNAME%}</th>
+                        <th>{%$LANG.MODULE%}</th>
+                        <th>{%$LANG.CONTROLLER%}</th>
+                        <th>{%$LANG.ACTION%}</th>
+                        <th>{%$LANG.LOG_INFO%}</th>
+                        <th>{%$LANG.CIP%}</th>
+                        <th class="sorting sorting_desc" data-field="create_time">{%$LANG.CTIME%}</th>
+                    </tr>
+                </thead>
+                <tbody class="middle-align" id="table_body">
+
+                </tbody>
+            </table>
+            <div class="row"><div class="col-xs-12"><ul id="pages"></ul></div></div>
+        </div>
+        </div>
+</div>
+<script type="text/javascript">
+    var gparams = {%$params|json_encode%};
+</script>
+<script type="text/javascript">
+    function main_page(newPage, reload){
+        gparams['page']  = newPage;
+        var params = gparams;
+        params['rt']    = 'api';
+        params['do']    = 1;
+
+
+        var url = '{%$__URI__%}'+$.query.sets(params).toString();
+
+        $.ajax({
+            url: url,
+            method: 'GET',
+            dataType: 'json',
+            success: function(resp){
+                if(resp.status.code === $SCOPES.$status.SUCC){
+                    show_list(resp.data.list);
+                    if(reload){
+                        show_page(resp.data.page,resp.data.total_page);
+                    }
+                }
+            }
+        });
+    }
+
+    function show_page(currentPage,totalPages){
+        if(totalPages<=0)
+            totalPages = 1;
+        var options = {
+            bootstrapMajorVersion:3,
+            alignment:'right',
+            currentPage: currentPage,
+            numberOfPages: 5,
+            totalPages:totalPages,
+            onPageChanged: function(event, oldPage, newPage){
+                main_page(newPage);
+            }
+
+        }
+        $('#pages').bootstrapPaginator(options);
+    }
+    function show_list(list){
+        var str = '';
+        var len = list.length;
+        if(len>0){
+            for(var i=0; i<len; i++){
+                str += '<tr>'+
+                        '<td>'+list[i]['username']+'</a></td>'+
+                        '<td>'+list[i]['module']+'</td>'+
+                        '<td>'+list[i]['controller']+'</td>'+
+                        '<td>'+list[i]['action']+'</td>'+
+                        '<td style="word-break:break-all">'+list[i]['log_info']+'</td>'+
+                        '<td>'+list[i]['cip']+'</td>'+
+                        '<td>'+list[i]['create_time']+'</td>'+
+                        '</tr>';
+            }
+        }
+
+        $('#table_body').html(str);
+    }
+
+    jQuery(document).ready(function($){
+        main_page(1, true);
+        $("form#list-search").validate({
+            submitHandler: function(form){
+                var data = $(form).serializeArray();
+                for(var v in data){
+                    gparams[data[v]['name']] = data[v]['value'];
+
+                }
+                main_page(1,true);
+            }
+        });
+        $('.sorting').click(function(){
+            var sortBy = $(this).attr('data-field');
+            var sort = $(this).attr('class').substring(8);
+            $('.sorting').attr('class', 'sorting');
+            if(sort=='sorting_desc'){
+                gparams['sort']  = sortBy+' asc';
+                $(this).attr('class', 'sorting sorting_asc');
+            }else{
+                gparams['sort']  = sortBy+' desc';
+                $(this).attr('class', 'sorting sorting_desc');
+            }
+            main_page(1,true);
+        });
+    });
+</script>
+{%include file="public/footer.html"%}

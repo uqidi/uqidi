@@ -1,0 +1,120 @@
+<div class="row">
+    <div class="col-md-12">
+        <input type="hidden" id="form_id" name="id">
+        <table class="table table-bordered table-striped">
+
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    function fillEdit(show_url){
+        $("form#form_modal table").html('');
+        $.ajax({
+            dataType: "json",
+            url: show_url,
+            success: function(json){
+                if(json.status.code === $SCOPES.$status.SUCC){
+                    var action_name = 'init_'+json.data.action;
+                    window[action_name](json.data.info);
+                }else{
+                    alert(json.status.msg);
+                }
+
+            }
+        });
+    }
+
+
+    function init_edit(data){
+
+        var str='<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.PAY_TYPE%}</label></td>' +
+                    '<td>{%$pay_types_select%}</td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.ACCOUNT_TYPE%}</label></td>' +
+                    '<td>{%$account_types_select%}</td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.ACCOUNT_NAME%}</label></td>' +
+                    '<td><input type="text" class="form-control" id="form_account_name" name="account_name"></td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.ACCOUNT_ID%}</label></td>' +
+                    '<td><input type="text" class="form-control" id="form_account_id" name="account_id"></td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.LISTORDER%}</label></td>' +
+                    '<td><input type="text" class="form-control" id="form_listorder" name="listorder"></td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.STATUS%}</label></td>' +
+                    '<td>{%$status_select%}</td>' +
+                '</tr>';
+        $("form#form_modal table").html(str);
+        for(var v in data){
+            if(v=='status' || v=='pay_type' || v=='account_type'){
+                $('#form_'+v).find('option[value="'+data[v]+'"]').prop("selected",true);
+            }else{
+                $('#form_'+v).val(data[v]);
+            }
+        }
+        $("form#form_modal").attr('action', '{%U('edit')%}?rt=api&do=1');
+    }
+
+    function fillAdd(){
+        $('#form_id').val('');
+        var str='<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.PAY_TYPE%}</label></td>' +
+                    '<td>{%$pay_types_select%}</td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.ACCOUNT_TYPE%}</label></td>' +
+                    '<td>{%$account_types_select%}</td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.ACCOUNT_NAME%}</label></td>' +
+                    '<td><input type="text" class="form-control" id="form_account_name" name="account_name"></td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.ACCOUNT_ID%}</label></td>' +
+                    '<td><input type="text" class="form-control" id="form_account_id" name="account_id"></td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.LISTORDER%}</label></td>' +
+                    '<td><input type="text" class="form-control" id="form_listorder" name="listorder"></td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td><label for="field-2" class="control-label">{%$LANG.STATUS%}</label></td>' +
+                    '<td>{%$status_select%}</td>' +
+                '</tr>';
+        $("form#form_modal table").html(str);
+        $("form#form_modal").attr('action', '{%U('add')%}?rt=api&do=1');
+    }
+
+    $(document).ready(function($){
+        $("form#form_modal").validate({
+            submitHandler: function(form){
+                var data = $(form).serializeArray();
+                var form_action = $(form).attr('action');
+                $.ajax({
+                    url: form_action,
+                    method: 'POST',
+                    dataType: 'json',
+                    data: data,
+                    success: function(resp){
+                        if(resp.status.code === $SCOPES.$status.SUCC){
+                            closeFormModal();
+                            if(resp.data.is_reload)
+                                main_page(gparams['page'],true);
+                        }else{
+                            alert(resp.status.msg);
+                        }
+                    }
+                });
+            }
+        });
+
+    });
+
+</script>

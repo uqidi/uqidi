@@ -1,0 +1,39 @@
+<div class="modal fade" id="show-modal" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{%$LANG.SHOW%}</h4>
+            </div>
+            <div class="modal-body" id="show-modal-body" >
+                <table class="table table-bordered table-striped">
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">{%$LANG.CLOSE%}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function showShowModal(show_url,model_config){
+        var model_config = model_config || {backdrop: 'static'};
+        $('#show-modal').modal('show', model_config);
+        $.ajax({
+            dataType: "json",
+            url: show_url,
+            success: function(json){
+                var str = '';
+                if(json.status.code === $SCOPES.$status.SUCC){
+                    for(var v in json.data){
+                        str += '<tr>'
+                                    +'<td><label for="field-2" class="control-label">'+v+'</label></td>'
+                                    +'<td>'+json.data[v]+'</td>'
+                                +'</tr>';
+                    }
+                }
+                $('#show-modal-body table').html(str);
+            }
+        });
+    }
+</script>

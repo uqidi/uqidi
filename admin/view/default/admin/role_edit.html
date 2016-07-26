@@ -1,0 +1,172 @@
+<div class="row">
+    <div class="col-md-12">
+        <input type="hidden" id="form_id" name="id">
+        <table class="table table-bordered table-striped">
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <td><label for="field-2" class="control-label">{%$LANG.ROLE_NAME%}</label></td>
+                    <td>
+                        <input type="text" class="form-control" id="form_role_name" name="role_name">
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="field-2" class="control-label">{%$LANG.STATUS%}</label></td>
+                    <td>
+                        {%$status_select%}
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="field-2" class="control-label">{%$LANG.PRIV%}</label></td>
+                    <td>
+                        <table class="table mail-table">
+                            <thead>
+                                <tr>
+                                    <th class="col-header-options" colspan="2">
+                                        <input type="checkbox" name="selectall" value="1"/> {%$LANG.SELECTALL%}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {%foreach from=$menu_list item=module%}
+                                <tr class="checkbox_li">
+                                    <td class="col-cb">
+                                        <div class="checkbox checkbox-replace">
+                                            <input type="checkbox" name="priv[]" id="menu_{%$module['id']%}" value="{%$module['id']%}"/> {%$module['name']%}
+                                        </div>
+                                    </td>
+                                    <td class="col-name">
+                                        {%if isset($module['sub'])%}
+                                            {%foreach from=$module['sub'] item=controller%}
+                                                <input type="checkbox" name="priv[]" id="menu_{%$controller['id']%}" value="{%$controller['id']%}"/> {%$controller['name']%}
+                                                {%if isset($controller['sub'])%}
+                                                    {%foreach from=$controller['sub'] item=action%}
+                                                        <input type="checkbox" name="priv[]" id="menu_{%$action['id']%}" value="{%$action['id']%}"/> {%$action['name']%}
+                                                    {%/foreach%}
+                                                {%/if%}
+                                                <br/>
+                                            {%/foreach%}
+                                        {%/if%}
+                                    </td>
+                                </tr>
+                                {%/foreach%}
+                            </tbody>
+
+                        </table>
+
+                    </td>
+                </tr>
+            </table>
+        </table>
+    </div>
+</div>
+<script type="text/javascript">
+    function fillEdit(show_url){
+        $(".mail-table input[type='checkbox']").prop('checked', false);
+        $.ajax({
+            dataType: "json",
+            url: show_url,
+            success: function(json){
+                if(json.status.code === $SCOPES.$status.SUCC){
+                    for(var v in json.data){
+                        if(v=='status'){
+                            $('#form_'+v).find('option[value="'+json.data[v]+'"]').prop("selected",true);
+                        }else if(v=='priv'){
+                            fillPriv(json.data[v]);
+                        }else{
+                            $('#form_'+v).val(json.data[v]);
+                        }
+                    }
+                }else{
+                    alert(json.status.msg);
+                }
+
+            }
+        });
+        $("form#form_modal").attr('action', '{%U('edit', 'Role', 'admin')%}?rt=api&do=1');
+    }
+
+    function fillPriv(data){
+        if(typeof(data) == 'string' && data == 'all'){
+            $(".mail-table input[type='checkbox']").prop('checked', true);
+            return true;
+        }
+
+        var len = data.length;
+        if(len>0){
+            for(var i=0; i<len; i++){
+                $('#menu_'+data[i]).prop('checked', true).prop('checked', true);
+            }
+
+        }
+    }
+
+    function fillAdd(data){
+        $("form#form_modal").each(function(i,option){
+            option.reset();
+        });
+        $('#form_id').val('');
+        $(".mail-table input[type='checkbox']").prop('checked', false);
+        $("form#form_modal").attr('action', '{%U('add', 'Role', 'admin')%}?rt=api&do=1');
+    }
+
+    $(document).ready(function($){
+        $(".mail-table thead input[type='checkbox']").on('change', function(ev){
+            if($(this).is(':checked')){
+                $(".mail-table tbody input[type='checkbox']").prop('checked', true);
+            }else{
+                $(".mail-table tbody input[type='checkbox']").prop('checked', false);
+            }
+        });
+
+        $(".checkbox_li").each(function(){
+            var that = $(this);
+            that.find(".col-cb input[type='checkbox']").on('change', function(ev){
+                if($(this).is(':checked')){
+                    that.find(".col-name input[type='checkbox']").prop('checked', true);
+                }else{
+                    that.find(".col-name input[type='checkbox']").prop('checked', false);
+                }
+            });
+            that.find(".col-name input[type='checkbox']").on('change', function(ev){
+                if($(this).is(':checked')){
+                    that.find(".col-cb input[type='checkbox']").prop('checked', true);
+                }
+            });
+        });
+
+
+        $("form#form_modal").validate({
+            rules: {
+                role_name: {
+                    required: true
+                }
+            },
+
+            messages: {
+                realname: {
+                    required: '{%$LANG.ENTER_MSG%}{%$LANG.ROLE_NAME%}.'
+                }
+            },
+            submitHandler: function(form){
+                var data = $(form).serializeArray();
+                var form_action = $(form).attr('action');
+                $.ajax({
+                    url: form_action,
+                    method: 'POST',
+                    dataType: 'json',
+                    data: data,
+                    success: function(resp){
+                        if(resp.status.code === $SCOPES.$status.SUCC){
+                            closeFormModal();
+                            main_page(gparams['page'],true);
+                        }else{
+                            alert(resp.status.msg);
+                        }
+                    }
+                });
+            }
+        });
+
+    });
+
+</script>

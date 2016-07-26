@@ -1,0 +1,47 @@
+<div class="modal fade" id="confirm-modal" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{%$LANG.CONFIRM%}</h4>
+            </div>
+            <div class="modal-body" id="confirm-modal-body"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" id="confirm-model-save">{%$LANG.CONFIRM%}</button>
+                <button type="button" class="btn btn-white" data-dismiss="modal" id="confirm-model-close" style="display:none;">{%$LANG.CLOSE%}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function showConfirmModal(body,json_url,model_call,model_config){
+        var model_config = model_config || {backdrop: 'static'};
+        $('#confirm-modal').modal('show', model_config);
+        $('#confirm-modal-body').html(body);
+        $('#confirm-model-save').show();
+        $('#confirm-model-close').hide();
+
+        $('#confirm-model-save').click(function(){
+            var that = $(this);
+            $.ajax({
+                dataType: "json",
+                url: json_url,
+                success: function(json){
+
+                    if(json.status.code === $SCOPES.$status.SUCC){
+                        $('#confirm-modal').modal('hide');
+                    }else{
+                        $('#confirm-modal-body').html(json.status.msg);
+                        that.hide();
+                        $('#confirm-model-close').show();
+                    }
+                    if(typeof(model_call) == 'function'){
+                        model_call(json);
+                    }
+                }
+            });
+
+        });
+
+    }
+</script>

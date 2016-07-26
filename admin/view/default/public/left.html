@@ -1,0 +1,72 @@
+<div class="sidebar-menu toggle-others fixed">
+    <div class="sidebar-menu-inner">
+        <header class="logo-env">
+            <div class="logo">
+                <a href="{%U('index','Main','admin')%}" class="logo-expanded">
+                    <img src="{%$RIA_URL%}images/logo@2x.png" width="80" alt="" />
+                </a>
+                <a href="{%U('index','Main','admin')%}" class="logo-collapsed">
+                    <img src="{%$RIA_URL%}images/logo-collapsed@2x.png" width="40" alt="" />
+                </a>
+            </div>
+            <div class="mobile-menu-toggle visible-xs">
+                <a href="#" data-toggle="mobile-menu">
+                    <i class="fa-bars"></i>
+                </a>
+            </div>
+        </header>
+        <ul id="main-menu" class="main-menu">
+            {%$menus%}
+        </ul>
+    </div>
+</div>
+<div class="main-content">
+    <nav class="navbar user-info-navbar" role="navigation">
+        <ul class="user-info-menu left-links list-inline list-unstyled">
+            <li class="hidden-sm hidden-xs">
+                <a href="#" data-toggle="sidebar">
+                    <i class="fa-bars"></i>
+                </a>
+            </li>
+        </ul>
+        <ul class="user-info-menu right-links list-inline list-unstyled">
+            <li class="search-form" style="min-height: 76px;">
+                <form method="get" action="">
+                    <input type="text" name="s" class="form-control search-field" placeholder="Type to search...">
+                    <button type="submit" class="btn btn-link">
+                        <i class="linecons-search"></i>
+                    </button>
+                </form>
+            </li>
+            <li class="dropdown user-profile">
+                <a href="#" data-toggle="dropdown">
+                    <img src="{%$RIA_URL%}images/user-4.png" alt="user-image" class="img-circle img-inline userpic-32" width="28" />
+                <span>
+                    {%$admin['username']%}
+                    <i class="fa-angle-down"></i>
+                </span>
+                </a>
+                <ul class="dropdown-menu user-profile-menu list-unstyled">
+                    <li>
+                        <a href="{%U('settings', 'Main', 'admin')%}">
+                            <i class="fa-wrench"></i>
+                            {%$LANG.SETTINGS%}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{%U('profile', 'Main', 'admin')%}">
+                            <i class="fa-user"></i>
+                            {%$LANG.PROFILE%}
+                        </a>
+                    </li>
+                    <li class="last">
+                        <a href="{%U('logout', 'Login', 'admin')%}">
+                            <i class="fa-lock"></i>
+                            {%$LANG.LOGOUT%}
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+        </ul>
+    </nav>

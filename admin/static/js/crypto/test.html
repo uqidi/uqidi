@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+</head>
+<body>
+<script src="rollups/aes.js"></script>
+<script src="rollups/md5.js"></script>
+<script src="components/mode-ecb.js"></script>
+<script src="components/tripledes.js"></script>
+<script src="crypto.js"></script>
+<script>
+
+
+
+    var wo_string = '为热舞发撒发的撒呃呃呃   发的撒';
+
+
+    var en_str = encrypt(wo_string);
+    console.info('ciphertext:', en_str);
+    var de_str = decrypt(en_str);
+    console.info('plaintext :', de_str);
+</script>
+</body>
+</html>

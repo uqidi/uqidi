@@ -1,0 +1,43 @@
+<form method="post" role="form" id="form_modal" >
+    <div class="modal fade" id="form-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="form-modal-title"></h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="errors-container"></div>
+                    {%include file=$modal_body%}
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal">{%$LANG.CLOSE%}</button>
+                    <button type="submit" class="btn btn-info">{%$LANG.SAVE%}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script src="{%$RIA_URL%}js/jquery-validate/jquery.validate.min.js"></script>
+<script type="text/javascript">
+    function showFormModal(title,data,fill_call,model_config){
+        var model_config = model_config || {backdrop: 'static'};
+        $('#form-modal').modal('show', model_config);
+        $('#form-modal-title').html(title);
+        if(typeof(data) !== 'undefined'){
+            if(typeof(fill_call) == 'function'){
+                fill_call(data);
+            }else{
+                fillFormModal(data);
+            }
+        }
+
+    }
+
+    function closeFormModal(){
+        $('#form-modal').modal('hide');
+        return false;
+    }
+</script>

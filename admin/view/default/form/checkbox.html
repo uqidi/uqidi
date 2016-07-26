@@ -1,0 +1,9 @@
+<p id="form_{%$form_checkbox['id']%}">
+    {%foreach from=$form_checkbox.options item=option key=option_key%}
+        {%if isset($form_checkbox['checked']) && is_array($form_checkbox['checked']) && in_array($option_key, $form_checkbox['checked'])%}
+            <label class="checkbox-inline"><input type="checkbox" name="{%$form_checkbox['name']%}[]" value="{%$option_key%}" checked> {%$option%}</label>
+        {%else%}
+            <label class="checkbox-inline"><input type="checkbox" name="{%$form_checkbox['name']%}[]" value="{%$option_key%}"> {%$option%}</label>
+        {%/if%}
+    {%/foreach%}
+</p>

@@ -1,0 +1,106 @@
+{%assign var="jses" value=['jquery-validate/jquery.validate.min'] %}
+{%include file="public/header.html"%}
+    {%include file="public/left.html"%}
+    {%include file="public/page_title.html"%}
+    <div class="row">
+        <form role="form" method="post" id="form-mailtpl" class="form-horizontal">
+            <input type="hidden" id="code" name="code" value="{%$list[0]['code']%}">
+            <div class="col-md-12">
+                <div class="tabs-vertical-env">
+                    <div class="tab-content">
+                        {%foreach item=vo key=k from=$list%}
+                            {%if $k>0 %}
+                            <div class="tab-pane" id="{%$vo.code%}">
+                            {%else%}
+                            <div class="tab-pane active" id="{%$vo.code%}">
+                            {%/if%}
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" for="field-1">{%$LANG.MAILTPL_CODE%}：</label>
+                                    <div class="col-sm-2">
+                                        {%$vo['code']%}
+                                    </div>
+                                </div>
+                                <div class="form-group-separator"></div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" for="field-2">{%$LANG.MAILTPL_SUBJECT%}：</label>
+                                    <div class="col-sm-2">
+                                        <input type="text" class="form-control" id="mailtpl_{%$vo.code%}_subject" name="data[{%$vo.code%}][subject]" value="{%$vo['subject']%}">
+                                    </div>
+                                </div>
+                                <div class="form-group-separator"></div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" for="field-3">{%$LANG.EXPIRES%}：</label>
+                                    <div class="col-sm-2">
+                                        <input type="text" class="form-control" id="mailtpl_{%$vo.code%}_expires" name="data[{%$vo.code%}][expires]" value="{%$vo['expires']%}">
+                                    </div>
+                                </div>
+                                <div class="form-group-separator"></div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" for="field-5">{%$LANG.MAILTPL_CONTENT%}：</label>
+                                    <div class="col-sm-10">
+                                        <textarea id="mailtpl_{%$vo.code%}_content" name="data[{%$vo.code%}][content]" class="form-control" rows="8">{%$vo['content']%}</textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group-separator"></div>
+                                <div class="form-group">
+                                    <div class="btn center-block">
+                                        <button type="reset" class="btn btn-white">{%$LANG.RESET%}</button>
+                                        <button type="submit" class="btn btn-info">{%$LANG.SAVE%}</button>
+                                        <button type="button" class="btn btn-warning" onclick="publish()">{%$LANG.PUBLISH%}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        {%/foreach%}
+                    </div>
+                    <ul class="nav tabs-vertical">
+                        {%foreach item=vo key=k from=$list%}
+                            {%if $k>0 %}
+                                <li><a href="#{%$vo.code%}" data-toggle="tab" onclick="$('#code').val('{%$vo.code%}')">{%$vo.subject%}</a></li>
+                            {%else%}
+                                <li class="active"><a href="#{%$vo.code%}" data-toggle="tab" onclick="$('#code').val('{%$vo.code%}')">{%$vo.subject%}</a></li>
+                            {%/if%}
+                        {%/foreach%}
+                    </ul>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function($){
+            $("form#form-mailtpl").validate({
+                submitHandler: function(form){
+                    var data = $(form).serializeArray();
+                    var post_data = [];
+                    var code = $('#code').val();
+                    for(var v in data){
+                        var data_name = data[v]['name'];
+                        if(data_name == 'code' || data_name.indexOf('data['+code+']')>=0){
+                            post_data.push(data[v]);
+                        }
+                    }
+                    $.ajax({
+                        url: "{%U('mailtpl')%}?rt=api&do=1",
+                        method: 'POST',
+                        dataType: 'json',
+                        data: data,
+                        success: function(resp){
+                            alert('{%$LANG.SAVE%}'+resp.status.msg);
+                        }
+                    });
+                    }
+            });
+
+        });
+        function publish(){
+            var code = $('#code').val();
+            $.ajax({
+                url: "{%U('mailtpl_publish')%}?rt=api&code="+code,
+                method: 'GET',
+                dataType: 'json',
+                success: function(resp){
+                    alert('{%$LANG.PUBLISH%}'+resp.status.msg);
+                }
+            });
+        }
+    </script>
+{%include file="public/footer.html"%}

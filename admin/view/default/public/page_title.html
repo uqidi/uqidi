@@ -1,0 +1,27 @@
+<div class="page-title">
+    {%if isset($cur_menu)%}
+    <div class="title-env">
+        <h1 class="title">{%$cur_menu['name']%}</h1>
+        <p class="description">{%$cur_menu['description']%}</p>
+    </div>
+    {%/if%}
+    <div class="breadcrumb-env">
+
+        <ol class="breadcrumb bc-1">
+            <li>
+                <a href="{%U('index','Main','admin')%}"><i class="fa-home"></i>{%$LANG.HOME%}</a>
+            </li>
+            {%if isset($top_menu)%}
+            <li>
+                <a href="javascript:void(0);">{%$top_menu['name']%}</a>
+            </li>
+            {%/if%}
+            {%if isset($cur_menu)%}
+            <li class="active">
+                <strong>{%$cur_menu['name']%}</strong>
+            </li>
+            {%/if%}
+        </ol>
+
+    </div>
+</div>
