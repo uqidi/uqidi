@@ -23,7 +23,7 @@ return array(
     'lang_display'  => false,
 
 
-    'cross'         => array('uqidi.com', 'uqidi.cn'),
+    'cross'         => array('qidiyao.com', 'qidiyao.cn'),
     'log_attribute' => array('uid','id'),
     'cookie_prefix' => 'qd_',
     'cookie_expire' => '86400',
