@@ -57,11 +57,11 @@ class T_Http{
      */
     private function _curlGet($url, $data='', $timeout=5){
         if(!empty($data)){
-            $data = is_array($data) ? self::http_build_query($data) : $data;
+            $data = is_array($data) ? http_build_query($data) : $data;
             $url .= '?'.$data;
         }
 
-        $curl = curl_init();
+        $curl = curl_init($url);
 
         $parse_url = parse_url($url);
         /* 判断HTTPS请求 */
@@ -76,7 +76,6 @@ class T_Http{
         }else{
             $curl_opts = array(
                 CURLOPT_RETURNTRANSFER  => true,
-                CURLOPT_URL             => $url,
                 CURLOPT_HTTPGET         => 1,
                 CURLOPT_HEADER          => false,
                 CURLOPT_TIMEOUT         => $timeout,
@@ -84,28 +83,28 @@ class T_Http{
         }
 
 
-        $curl_opts = array_merge($curl_opts, self::$_curlopt);
+        $curl_opts = T_Array::merge($curl_opts, self::$_curlopt);
         curl_setopt_array($curl, $curl_opts);
 
 
         $start = self::_microtime();
-    	$rs =curl_exec($curl);
-    	$conn_time = round(self::_microtime() - $start , 3);
+        $rs =curl_exec($curl);
+        $conn_time = round(self::_microtime() - $start , 3);
 
 
-    	if($rs === false){
+        if($rs === false){
             T_Logger::monitorLog(__CLASS__ , 'curl_get_err '.$url.' '.$conn_time.' '.curl_error($curl) , T_Logger::LOG_LEVEL_ALERM);
             curl_close($curl);
             return false;
         }
         curl_close($curl);
 
-    	if($conn_time > 1)
+        if($conn_time > 1)
             T_Logger::monitorLog(__CLASS__ , 'curl_get_time '.$url.' '.$conn_time , T_Logger::LOG_LEVEL_NOTICE);
-    	else
+        else
             T_Logger::debugLog(__CLASS__ , 'curl_get_time '.$url.' '.$conn_time);
 
-    	return $rs;
+        return $rs;
     }
 
     /**
@@ -115,7 +114,7 @@ class T_Http{
      * @return bool|mixed
      */
     private function _curlPost($url , $aPost , $timeout=5){
-        $curl = curl_init();
+        $curl = curl_init($url);
 
         $parse_url = parse_url($url);
         /* 判断HTTPS请求 */
@@ -132,7 +131,6 @@ class T_Http{
         }else{
             $curl_opts = array(
                 CURLOPT_RETURNTRANSFER  => true,
-                CURLOPT_URL             => $url,
                 CURLOPT_POST            => 1,
                 CURLOPT_POSTFIELDS      => $aPost,
                 CURLOPT_TIMEOUT         => $timeout,
@@ -141,19 +139,19 @@ class T_Http{
 
 
 
-        $curl_opts = array_merge($curl_opts, self::$_curlopt);
+        $curl_opts = T_Array::merge($curl_opts, self::$_curlopt);
         curl_setopt_array($curl, $curl_opts);
 
-    	$start = self::_microtime();
-    	$rs =curl_exec($curl);
-    	$conn_time = round(self::_microtime() - $start , 3);
+        $start = self::_microtime();
+        $rs =curl_exec($curl);
+        $conn_time = round(self::_microtime() - $start , 3);
 
 
-    	if($rs === false){
+        if($rs === false){
             T_Logger::monitorLog(__CLASS__ , 'curl_post_err '.$url.' '.$conn_time.' '.curl_error($curl), T_Logger::LOG_LEVEL_ALERM);
             curl_close($curl);
             return false;
-    	}
+        }
 
         curl_close($curl);
 
@@ -162,7 +160,7 @@ class T_Http{
         else
             T_Logger::debugLog(__CLASS__ , 'curl_post_time '.$url.' '.$conn_time);
 
-    	return $rs;
+        return $rs;
     }
 
     /**
@@ -170,6 +168,6 @@ class T_Http{
      * @return mixed
      */
     private function _microtime(){
-    	return microtime(true);
+        return microtime(true);
     }
 }
