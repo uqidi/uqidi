@@ -27,5 +27,4 @@ require UQIDI_PATH.'F/system.php';
 require UQIDI_PATH.'K/Core/Loader.php';
 require UQIDI_PATH.'T/Timer.php';
 Loader::loadApp();
-
-
+//111
